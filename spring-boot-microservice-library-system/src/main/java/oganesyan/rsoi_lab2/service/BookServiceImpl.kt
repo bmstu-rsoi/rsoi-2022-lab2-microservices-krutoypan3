@@ -31,11 +31,11 @@ open class BookServiceImpl @Autowired constructor(
     override fun getBooksByLibrary(bookRequest: BookRequest): BookResponse {
 
         // Здесь отправляем запрос на получение ID библиотеки по UID
-        var url = "http://localhost:8100/library-system/getLibraryIDByUID?library_uid=${bookRequest.library_uid}"
+        var url = "http://localhost:8060/library-system/getLibraryIDByUID?library_uid=${bookRequest.library_uid}"
         val library_id = restTemplate.getForObject(url, LibraryBookResponse::class.java)?.library_id
         library_id?.let { libraryID ->
             // Здесь отправляет запрос на получение ID книг по ID библиотеки
-            url = "http://localhost:8100/library-system/library-books/getBooksIdByLibraryId?library_id=$libraryID"
+            url = "http://localhost:8060/library-system/library-books/getBooksIdByLibraryId?library_id=$libraryID"
 
             val booksID = restTemplate.getForObject(url, LibraryBookInfoResponse::class.java)?.books
             if (booksID?.isNotEmpty() == true) {
