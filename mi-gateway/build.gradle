@@ -60,7 +60,7 @@ springBoot {
 }
 
 bootJar {
-    archiveFileName = "${project.name}.jar"
+    archiveFileName = "gateway.jar"
     layered {
         enabled = true
     }

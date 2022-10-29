@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: library/postgres:13
+    container_name: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  gateway:
+    image: gateway
+    build: ./mi-gateway/
+    ports:
+      - "8080:8080"
+
+  reservation:
+    image: reservation-system
+    build: ./mi-reservation-system/
+    ports:
+      - "8070:8070"
+
+  library:
+    image: library-system
+    build: ./mi-library-system/
+    ports:
+      - "8060:8060"
+
+  rating:
+    image: rating-system
+    build: ./mi-rating-system/
+    ports:
+      - "8050:8050"
+
+volumes:
+  db-data:

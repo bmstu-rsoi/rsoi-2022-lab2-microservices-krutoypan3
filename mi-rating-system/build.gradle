@@ -60,7 +60,7 @@ springBoot {
 }
 
 bootJar {
-    archiveFileName = "${project.name}.jar"
+    archiveFileName = "rating.jar"
     layered {
         enabled = true
     }

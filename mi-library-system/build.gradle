@@ -60,7 +60,7 @@ springBoot {
 }
 
 bootJar {
-    archiveFileName = "${project.name}.jar"
+    archiveFileName = "library.jar"
     layered {
         enabled = true
     }

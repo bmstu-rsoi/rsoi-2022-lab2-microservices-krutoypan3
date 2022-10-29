@@ -60,7 +60,7 @@ springBoot {
 }
 
 bootJar {
-    archiveFileName = "${project.name}.jar"
+    archiveFileName = "reservation.jar"
     layered {
         enabled = true
     }
