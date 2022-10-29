@@ -12,7 +12,6 @@ import oganesyan.rsoi_lab2.model.library.LibraryRequest
 import oganesyan.rsoi_lab2.model.library.LibraryResponse
 import oganesyan.rsoi_lab2.model.library_book.LibraryBookResponse
 import oganesyan.rsoi_lab2.service.LibraryService
-import org.springframework.core.env.Environment
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -23,18 +22,7 @@ import javax.validation.Valid
 @Tag(name = "library_system_controller")
 @RestController
 @RequestMapping("/library-system")
-class LibrarySystemController(private val environment: Environment, private val repository:ExchangeValueRepository,private val libraryService: LibraryService) {
-
-    @GetMapping("/currency-exchange/from/{from}/to/{to}") // TODO
-    fun retrieveExchangeValue(
-        @PathVariable from: String?,
-        @PathVariable to: String?,
-    ): ExchangeValue {
-        val exchangeValue: ExchangeValue = repository.findByFromAndTo(from, to)
-        exchangeValue.port =
-            Objects.requireNonNull(environment.getProperty("local.server.port")).toInt()
-        return exchangeValue
-    }
+class LibrarySystemController(private val libraryService: LibraryService) {
 
     @Operation(
         summary = "get_library_by_city",
