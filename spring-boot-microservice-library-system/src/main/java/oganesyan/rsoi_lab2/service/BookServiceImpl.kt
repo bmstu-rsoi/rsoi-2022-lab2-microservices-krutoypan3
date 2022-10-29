@@ -5,8 +5,9 @@ import oganesyan.rsoi_lab2.model.book.BookInfo
 import oganesyan.rsoi_lab2.model.book.BookRequest
 import oganesyan.rsoi_lab2.model.book.BookResponse
 import oganesyan.rsoi_lab2.model.book.CreateBookRequest
+import oganesyan.rsoi_lab2.model.library_book.BookIdUidResponse
 import oganesyan.rsoi_lab2.model.library_book.LibraryBookInfoResponse
-import oganesyan.rsoi_lab2.model.library_book.LibraryBookResponse
+import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
 import oganesyan.rsoi_lab2.repository.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -26,13 +27,13 @@ open class BookServiceImpl @Autowired constructor(
 
     private val REQUEST_SIZE: Int = 10
     private val REQUEST_PAGE: Int = 0
-    private val restTemplate = restTemplateBuilder.build();
+    private val restTemplate = restTemplateBuilder.build()
 
     override fun getBooksByLibrary(bookRequest: BookRequest): BookResponse {
 
         // Здесь отправляем запрос на получение ID библиотеки по UID
         var url = "http://localhost:8060/library-system/getLibraryIDByUID?library_uid=${bookRequest.library_uid}"
-        val library_id = restTemplate.getForObject(url, LibraryBookResponse::class.java)?.library_id
+        val library_id = restTemplate.getForObject(url, LibraryIdUidResponse::class.java)?.library_id
         library_id?.let { libraryID ->
             // Здесь отправляет запрос на получение ID книг по ID библиотеки
             url = "http://localhost:8060/library-system/library-books/getBooksIdByLibraryId?library_id=$libraryID"
@@ -50,6 +51,15 @@ open class BookServiceImpl @Autowired constructor(
             }
         }
         return entitiesToResponse(bookEntities = null, bookRequest = bookRequest)
+    }
+
+    override fun getBookIdByUid(book_uid: String?): BookIdUidResponse {
+        entityManager.joinTransaction()
+        val entities2 = entityManager.createNativeQuery("SELECT id FROM books WHERE book_uid = '$book_uid'").resultList
+        return if (entities2.isNotEmpty())
+            BookIdUidResponse(book_id = entities2[0].toString().toInt(), book_uid = book_uid)
+        else
+            BookIdUidResponse(book_id = null, book_uid = book_uid)
     }
 
     override fun putBooks(createBookRequest: CreateBookRequest) {

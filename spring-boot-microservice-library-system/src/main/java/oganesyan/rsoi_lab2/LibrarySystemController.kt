@@ -10,7 +10,7 @@ import oganesyan.rsoi_lab2.model.*
 import oganesyan.rsoi_lab2.model.library.CreateLibraryRequest
 import oganesyan.rsoi_lab2.model.library.LibraryRequest
 import oganesyan.rsoi_lab2.model.library.LibraryResponse
-import oganesyan.rsoi_lab2.model.library_book.LibraryBookResponse
+import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
 import oganesyan.rsoi_lab2.service.LibraryService
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
@@ -49,7 +49,7 @@ class LibrarySystemController(private val libraryService: LibraryService) {
             ApiResponse(
                 responseCode = "200",
                 description = "LibraryID by UID",
-                content = [Content(schema = Schema(implementation = LibraryBookResponse::class))]
+                content = [Content(schema = Schema(implementation = LibraryIdUidResponse::class))]
             ),
             ApiResponse(
                 responseCode = "404", description = "Not found library for city"

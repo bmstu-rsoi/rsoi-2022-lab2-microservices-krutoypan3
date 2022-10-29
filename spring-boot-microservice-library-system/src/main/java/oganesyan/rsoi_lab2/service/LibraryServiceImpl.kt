@@ -5,7 +5,7 @@ import oganesyan.rsoi_lab2.model.library.CreateLibraryRequest
 import oganesyan.rsoi_lab2.model.library.LibraryInfo
 import oganesyan.rsoi_lab2.model.library.LibraryRequest
 import oganesyan.rsoi_lab2.model.library.LibraryResponse
-import oganesyan.rsoi_lab2.model.library_book.LibraryBookResponse
+import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
 import oganesyan.rsoi_lab2.repository.LibraryRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -34,13 +34,13 @@ open class LibraryServiceImpl @Autowired constructor(
 
     override fun getAllLibrary(page: Int?, size: Int?) = entitiesToResponse(libraryRepository.findAll(), page, size)
 
-    override fun getLibraryIdByUid(library_uid: String?): LibraryBookResponse {
+    override fun getLibraryIdByUid(library_uid: String?): LibraryIdUidResponse {
         entityManager.joinTransaction()
         val entities2 = entityManager.createNativeQuery("SELECT id FROM library WHERE library_uid = '$library_uid'").resultList
         return if (entities2.isNotEmpty())
-            LibraryBookResponse(library_id = entities2[0].toString().toInt(), library_uid = library_uid)
+            LibraryIdUidResponse(library_id = entities2[0].toString().toInt(), library_uid = library_uid)
         else
-            LibraryBookResponse(library_id = -1, library_uid = library_uid)
+            LibraryIdUidResponse(library_id = null, library_uid = library_uid)
     }
 
     @Transactional

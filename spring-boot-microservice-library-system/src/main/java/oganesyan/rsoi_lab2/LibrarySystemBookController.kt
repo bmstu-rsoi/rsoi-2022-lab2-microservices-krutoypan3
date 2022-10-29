@@ -10,6 +10,8 @@ import oganesyan.rsoi_lab2.model.*
 import oganesyan.rsoi_lab2.model.book.BookRequest
 import oganesyan.rsoi_lab2.model.book.BookResponse
 import oganesyan.rsoi_lab2.model.book.CreateBookRequest
+import oganesyan.rsoi_lab2.model.library_book.BookIdUidResponse
+import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
 import oganesyan.rsoi_lab2.service.BookService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -42,6 +44,23 @@ class LibrarySystemBookController(private val bookService: BookService) {
         @RequestParam size: Int?,
         @RequestParam showAll: Boolean?,
     ) = bookService.getBooksByLibrary(BookRequest(library_uid, page, size, showAll))
+
+
+    @Operation(
+        summary = "get_bookID_by_UID",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "BookID by UID",
+                content = [Content(schema = Schema(implementation = BookIdUidResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "404", description = "Not found book"
+            ),
+        ]
+    )
+    @GetMapping("/getBookIDByUID", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getBookIDByUID(@RequestParam("book_uid") book_uid: String?) = bookService.getBookIdByUid(book_uid)
 
     @Operation(
         summary = "create_book", responses = [

@@ -1,19 +1,19 @@
 package oganesyan.rsoi_lab2
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import oganesyan.rsoi_lab2.model.CreateReservationRequest
 import oganesyan.rsoi_lab2.model.ReservationByUsernameItemResponse
-import oganesyan.rsoi_lab2.model.library.LibraryRequest
-import oganesyan.rsoi_lab2.model.library.LibraryResponse
 import oganesyan.rsoi_lab2.service.ReservationService
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import javax.validation.Valid
 
 
 @Tag(name = "library_system_controller")
@@ -38,4 +38,26 @@ class ReservationSystemController(private val reservationService: ReservationSer
     fun getReservationsByUsername(@RequestParam("username") username: String)
     = reservationService.getReservationsByUsername(username)
 
+
+
+    @Operation(
+        summary = "put_reservation", responses = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Created new reservation",
+                headers = [Header(name = "Location", description = "Path to new Reservation")]
+            ),
+            ApiResponse(
+                responseCode = "400", description = "Invalid data"
+            ),
+            ApiResponse(
+                responseCode = "501", description = "Сервер так смешно делает пых-пых"
+            )
+        ]
+    )
+    @PostMapping("/putReservation", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    private fun putReservation(@Valid @RequestBody request: CreateReservationRequest): ResponseEntity<Void> {
+        reservationService.putReservation(request)
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).build()
+    }
 }

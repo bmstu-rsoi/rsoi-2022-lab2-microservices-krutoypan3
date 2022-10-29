@@ -37,7 +37,8 @@ class LibrarySystemLibraryBookController(private val libraryBookService: Library
     )
     @GetMapping("/getBooksIdByLibraryId", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getBooksIdByLibraryId(
-        @RequestParam("library_id") library_id: Int?) = libraryBookService.getBooksIdByLibraryId(library_id)
+        @RequestParam("library_id") library_id: Int?,
+    ) = libraryBookService.getBooksIdByLibraryId(library_id)
 
 
     @Operation(
@@ -60,4 +61,25 @@ class LibrarySystemLibraryBookController(private val libraryBookService: Library
         libraryBookService.putLibraryBook(request)
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).build()
     }
+
+    @Operation(
+        summary = "get_available_count_by_book_uid_and_library_uid",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Available count by BookUid and LibraryUid",
+                content = [Content(schema = Schema(implementation = LibraryBookInfo::class))]
+            ),
+            ApiResponse(
+                responseCode = "404", description = "Not found books for library uid"
+            ),
+        ]
+    )
+    @GetMapping("/getAvailableCountByBookUidAndLibraryUid", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getAvailableCountByBookUidAndLibraryUid(
+        @RequestParam("book_uid") book_uid: String?,
+        @RequestParam("library_uid") library_uid: String?,
+    ) = libraryBookService.getAvailableCountByBookUidAndLibraryUid(book_uid = book_uid, library_uid = library_uid)
+
+
 }
