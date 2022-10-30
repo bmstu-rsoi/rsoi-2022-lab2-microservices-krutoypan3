@@ -26,7 +26,7 @@ open class BookServiceImpl @Autowired constructor(
 ) : BookService {
 
     private val REQUEST_SIZE: Int = 10
-    private val REQUEST_PAGE: Int = 0
+    private val REQUEST_PAGE: Int = 1
     private val restTemplate = restTemplateBuilder.build()
 
     override fun getBooksByLibrary(bookRequest: BookRequest): BookResponse {
@@ -92,7 +92,7 @@ open class BookServiceImpl @Autowired constructor(
             val requestSize = bookRequest.size ?: REQUEST_SIZE
 
             // Если пользователь в запросе не указал станицу в запросе, ставим стандартное значение
-            val requestPage = bookRequest.page ?: REQUEST_PAGE
+            val requestPage = (bookRequest.page ?: REQUEST_PAGE) - 1
 
             // TODO ТУТ МЫ ДОЛЖНЫ ПОСЛЕ ЭТОГО ПРОВЕРЯТЬ ЗАБРОНИРОВАННЫЕ КНИГИ // Надо тут это обдумать \\ Ну или не тут
             val showAll = bookRequest.showAll ?: false

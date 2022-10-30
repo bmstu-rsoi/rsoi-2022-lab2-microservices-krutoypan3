@@ -10,7 +10,9 @@ import oganesyan.rsoi_lab2.library.repository.LibraryRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+import java.util.*
 import javax.persistence.EntityManager
 
 @Transactional
@@ -20,11 +22,19 @@ open class LibraryServiceImpl @Autowired constructor(
 ) : LibraryService {
 
     private val REQUEST_SIZE: Int = 10
-    private val REQUEST_PAGE: Int = 0
+    private val REQUEST_PAGE: Int = 1
 
     @Transactional(readOnly = true)
     override fun getLibraryByCity(libraryRequest: LibraryRequest): LibraryResponse {
-        val libraryEntities = libraryRequest.city?.let { libraryRepository.findByCity(it) }
+
+        val result: String? = libraryRequest.city?.let{URLDecoder.decode(libraryRequest.city, StandardCharsets.UTF_8.name())}
+
+
+        val libraryEntities = result?.let { libraryRepository.findByCity(it) }
+
+        println("\n${result}\n")
+        println("\n${libraryEntities}\n")
+
         return entitiesToResponse(libraryEntities, libraryRequest.page, libraryRequest.size)
     }
 
@@ -69,7 +79,7 @@ open class LibraryServiceImpl @Autowired constructor(
             val requestSize = _requestSize ?: REQUEST_SIZE
 
             // Если пользователь в запросе не указал станицу в запросе, ставим стандартное значение
-            val requestPage = _requestPage ?: REQUEST_PAGE
+            val requestPage = (_requestPage ?: REQUEST_PAGE) - 1
 
             // Вычисляем реальный размер который мы можем вернуть
             val size = if (requestSize <= entities.size) requestSize else entities.size

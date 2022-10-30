@@ -39,11 +39,17 @@ open class LibraryBooksServiceImpl @Autowired constructor(
         val bookId = restTemplate.getForObject(url2, BookIdUidResponse::class.java)?.book_id
 
         return if (bookId != null && libraryId != null) {
-            val entity = libraryBookRepository.findFirstByBookIdAndLibraryId(bookId, libraryId)
+            entityManager.joinTransaction()
+            val entity = entityManager.createNativeQuery("SELECT book_id, library_id, available_count FROM library_books WHERE library_id = '$libraryId' AND book_id = '$bookId'").resultList
+
+            println("\n$entity\n")
+
+            val item: Array<Any?>? = entity[0] as Array<Any?>?
+
             LibraryBookInfo(
-                book_id = entity.bookId,
-                library_id = entity.libraryId,
-                available_count = entity.availableCount
+                book_id = bookId,
+                library_id = libraryId,
+                available_count = item?.get(2)?.toString()?.toInt() ?: 0
             )
         } else
             LibraryBookInfo(bookId, libraryId, available_count = null)

@@ -10,11 +10,11 @@ class LibraryBooksEntites {
     var id: Int? = null
 
     @Column
-    var bookId: Int? = null
+    var book_id: Int? = null
 
     @Column
-    var libraryId: Int? = null
+    var library_id: Int? = null
 
     @Column
-    var availableCount: Int? = null // Count in library
+    var available_count: Int? = null // Count in library
 }

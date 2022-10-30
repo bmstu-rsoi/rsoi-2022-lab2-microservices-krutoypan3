@@ -2,9 +2,7 @@ package oganesyan.rsoi_lab2.gateway.service
 
 import oganesyan.rsoi_lab2.gateway.error.ErrorBadRequest
 import oganesyan.rsoi_lab2.gateway.error.ErrorNotFound
-import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryInfo
-import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryRequest
-import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryResponse
+import oganesyan.rsoi_lab2.gateway.model.*
 import org.json.JSONObject
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
@@ -21,12 +19,77 @@ open class GatewayLibraryServiceImpl(restTemplateBuilder: RestTemplateBuilder): 
     private val restTemplate = restTemplateBuilder.build()
 
     override fun getLibraryByCity(libraryRequest: GatewayLibraryRequest): GatewayLibraryResponse {
-        val url = UriComponentsBuilder.fromHttpUrl("http://localhost:8060/library-system/getLibraryByCity")
+        val url = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/getLibraryByCity")
             .queryParam("page", libraryRequest.page)
             .queryParam("size", libraryRequest.size)
             .queryParam("city", libraryRequest.city)
             .toUriString()
 
+        val obj = getObjByUrl(url)
+
+        val totalElements = obj.getInt("totalElements")
+        val librariesInfoJsonArray = obj.getJSONArray("items")
+
+        val count: Int = librariesInfoJsonArray.length()
+        val librariesInfo: ArrayList<GatewayLibraryInfo> = ArrayList(count)
+        for (i in 0 until count) {
+            val jsonLibrary: JSONObject = librariesInfoJsonArray.getJSONObject(i)
+            val libraryInfo: GatewayLibraryInfo = parseGatewayLibraryInfo(jsonLibrary)
+            librariesInfo.add(libraryInfo)
+        }
+        return GatewayLibraryResponse(libraryRequest.page, libraryRequest.size, totalElements, librariesInfo)
+    }
+
+    override fun getBooksByLibrary(gatewayBooksByLibraryRequest: GatewayBooksByLibraryRequest): GatewayBookResponse {
+        val url = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/books/getBooksByLibrary")
+            .queryParam("library_uid", gatewayBooksByLibraryRequest.library_uid)
+            .queryParam("page", gatewayBooksByLibraryRequest.page)
+            .queryParam("size", gatewayBooksByLibraryRequest.size)
+            .queryParam("showAll", gatewayBooksByLibraryRequest.showAll)
+            .toUriString()
+
+        val obj = getObjByUrl(url)
+
+        val totalElements = obj.getInt("totalElements")
+
+        val booksInfoJsonArray = obj.getJSONArray("items")
+
+        val count: Int = booksInfoJsonArray.length()
+        val booksInfo: ArrayList<GatewayBookInfo> = ArrayList(count)
+        for (i in 0 until count) {
+            val jsonBook: JSONObject = booksInfoJsonArray.getJSONObject(i)
+            val bookInfo: GatewayBookInfo = parseGatewayBookInfo(jsonBook, gatewayBooksByLibraryRequest.library_uid?: "")
+            booksInfo.add(bookInfo)
+        }
+        return GatewayBookResponse(gatewayBooksByLibraryRequest.page, gatewayBooksByLibraryRequest.size, totalElements, booksInfo)
+    }
+
+    private fun parseGatewayBookInfo(obj: JSONObject, libraryUid: String): GatewayBookInfo {
+        val bookUid = obj.getString("bookUid")
+        val name = obj.getString("name")
+        val author = obj.getString("author")
+        val genre = obj.getString("genre")
+        val condition = obj.getString("condition")
+
+        val url = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/library-books/getAvailableCountByBookUidAndLibraryUid")
+            .queryParam("library_uid", libraryUid)
+            .queryParam("book_uid", bookUid)
+            .toUriString()
+        val obj2 = getObjByUrl(url)
+        println("\n$obj2\n")
+        val availableCount = obj2.getString("available_count")
+        return GatewayBookInfo(bookUid, name, author, genre, condition, availableCount.toLong())
+    }
+
+    private fun parseGatewayLibraryInfo(obj: JSONObject): GatewayLibraryInfo {
+        val libraryUid = obj.getString("libraryUid")
+        val name = obj.getString("name")
+        val address = obj.getString("address")
+        val city = obj.getString("city")
+        return GatewayLibraryInfo(libraryUid, name, address, city)
+    }
+
+    private fun getObjByUrl(url: String): JSONObject{
         val headers = HttpHeaders()
         headers[HttpHeaders.ACCEPT] = MediaType.APPLICATION_JSON_VALUE
         val entity: HttpEntity<*> = HttpEntity<Any>(headers)
@@ -55,27 +118,6 @@ open class GatewayLibraryServiceImpl(restTemplateBuilder: RestTemplateBuilder): 
         if (response.statusCode == HttpStatus.BAD_REQUEST) {
             throw ErrorBadRequest(response.body ?: "", ArrayList())
         }
-
-        val obj = JSONObject(response.body)
-
-        val totalElements = obj.getInt("totalElements")
-        val librariesInfoJsonArray = obj.getJSONArray("items")
-
-        val numCars: Int = librariesInfoJsonArray.length()
-        val librariesInfo: ArrayList<GatewayLibraryInfo> = ArrayList(numCars)
-        for (i in 0 until numCars) {
-            val jsonLibrary: JSONObject = librariesInfoJsonArray.getJSONObject(i)
-            val libraryInfo: GatewayLibraryInfo = parseGatewayLibraryInfo(jsonLibrary)
-            librariesInfo.add(libraryInfo)
-        }
-        return GatewayLibraryResponse(libraryRequest.page, libraryRequest.size, totalElements, librariesInfo)
-    }
-
-    private fun parseGatewayLibraryInfo(obj: JSONObject): GatewayLibraryInfo {
-        val libraryUid = obj.getString("libraryUid")
-        val name = obj.getString("name")
-        val address = obj.getString("address")
-        val city = obj.getString("city")
-        return GatewayLibraryInfo(libraryUid, name, address, city)
+        return JSONObject(response.body)
     }
 }
