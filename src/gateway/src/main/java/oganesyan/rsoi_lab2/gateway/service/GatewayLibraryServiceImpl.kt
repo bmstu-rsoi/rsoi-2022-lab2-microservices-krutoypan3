@@ -4,7 +4,6 @@ import oganesyan.rsoi_lab2.gateway.error.ErrorBadRequest
 import oganesyan.rsoi_lab2.gateway.error.ErrorNotFound
 import oganesyan.rsoi_lab2.gateway.model.*
 import org.json.JSONObject
-import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,9 +13,8 @@ import java.util.ArrayList
 
 @Transactional
 @Service
-open class GatewayLibraryServiceImpl(restTemplateBuilder: RestTemplateBuilder): GatewayLibraryService {
+class GatewayLibraryServiceImpl: GatewayLibraryService {
 
-    private val restTemplate = restTemplateBuilder.build()
 
     override fun getLibraryByCity(libraryRequest: GatewayLibraryRequest): GatewayLibraryResponse {
         val url = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/getLibraryByCity")
@@ -62,6 +60,16 @@ open class GatewayLibraryServiceImpl(restTemplateBuilder: RestTemplateBuilder): 
             booksInfo.add(bookInfo)
         }
         return GatewayBookResponse(gatewayBooksByLibraryRequest.page, gatewayBooksByLibraryRequest.size, totalElements, booksInfo)
+    }
+
+    override fun getRating(username: String): GatewayRatingResponse {
+        val url = UriComponentsBuilder.fromHttpUrl("http://rating:8050/rating-system/getRatingByUsername")
+            .queryParam("username", username)
+            .toUriString()
+
+        val obj = getObjByUrl(url)
+
+        return GatewayRatingResponse(username, obj.getInt("stars"))
     }
 
     private fun parseGatewayBookInfo(obj: JSONObject, libraryUid: String): GatewayBookInfo {

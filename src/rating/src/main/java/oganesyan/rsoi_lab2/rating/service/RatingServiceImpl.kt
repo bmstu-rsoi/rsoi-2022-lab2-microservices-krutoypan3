@@ -16,7 +16,7 @@ open class RatingServiceImpl @Autowired constructor(private val ratingRepository
     }
 
     private fun entitiesToResponse(entities: RatingEntities?): RatingResponse {
-        return RatingResponse(entities?.username, entities?.stars)
+        return RatingResponse(entities?.username, entities?.stars ?: 50)
     }
 
     override fun setRatingByUsername(setRatingRequest: SetRatingRequest) {

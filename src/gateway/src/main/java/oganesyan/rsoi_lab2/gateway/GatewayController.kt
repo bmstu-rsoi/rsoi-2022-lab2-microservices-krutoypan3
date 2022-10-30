@@ -11,11 +11,7 @@ import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryRequest
 import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryResponse
 import oganesyan.rsoi_lab2.gateway.service.GatewayLibraryService
 import org.springframework.http.*
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.*
 import java.util.*
 
@@ -55,7 +51,7 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
             ),
         ]
     )
-    @GetMapping("/libraries/{libraryUid}")
+    @GetMapping("/libraries/{libraryUid}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getBooksByLibrary(
         @PathVariable("libraryUid") libraryUid: String, @RequestParam("page") page: Int?, @RequestParam("size") size: Int?, @RequestParam("showAll") showAll: Boolean?,
     ) = gatewayLibraryService.getBooksByLibrary(
@@ -66,4 +62,9 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
             showAll = showAll
         )
     )
+
+    @GetMapping("/rating")
+    fun getRating(
+        @RequestHeader(value = "X-User-Name") username: String
+    ) = gatewayLibraryService.getRating(username)
 }
