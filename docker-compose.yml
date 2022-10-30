@@ -14,25 +14,25 @@ services:
 
   gateway:
     image: gateway
-    build: ./mi-gateway/
+    build: src/mi-gateway/
     ports:
       - "8080:8080"
 
   reservation:
     image: reservation-system
-    build: ./mi-reservation-system/
+    build: src/mi-reservation-system/
     ports:
       - "8070:8070"
 
   library:
     image: library-system
-    build: ./mi-library-system/
+    build: src/mi-library-system/
     ports:
       - "8060:8060"
 
   rating:
     image: rating-system
-    build: ./mi-rating-system/
+    build: src/mi-rating-system/
     ports:
       - "8050:8050"
 
