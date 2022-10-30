@@ -1,9 +1,9 @@
-package oganesyan.rsoi_lab2.database
+package oganesyan.rsoi_lab2.reservation.database
 
 import javax.persistence.*
 
 @Entity
-@Table(name = "books")
+@Table(name = "reservation")
 class ReservationEntities {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int? = null
     @Column var reservation_uid: String? = null

@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2;
+package oganesyan.rsoi_lab2.reservation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

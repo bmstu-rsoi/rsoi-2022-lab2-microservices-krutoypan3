@@ -1,7 +1,7 @@
-package oganesyan.rsoi_lab2.repository
+package oganesyan.rsoi_lab2.library.repository
 
-import oganesyan.rsoi_lab2.database.BookEntities
-import oganesyan.rsoi_lab2.database.LibraryEntities
+import oganesyan.rsoi_lab2.library.database.BookEntities
+import oganesyan.rsoi_lab2.library.database.LibraryEntities
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
 

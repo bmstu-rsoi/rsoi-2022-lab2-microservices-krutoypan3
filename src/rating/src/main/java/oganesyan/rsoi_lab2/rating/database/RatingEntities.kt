@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2.database
+package oganesyan.rsoi_lab2.rating.database
 
 import javax.persistence.*
 

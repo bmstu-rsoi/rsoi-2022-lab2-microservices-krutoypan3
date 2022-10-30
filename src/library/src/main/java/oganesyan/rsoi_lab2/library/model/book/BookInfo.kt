@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2.model.book
+package oganesyan.rsoi_lab2.library.model.book
 
 data class BookInfo(
     val bookUid: String?,

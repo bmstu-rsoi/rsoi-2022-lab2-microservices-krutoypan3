@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2.model.library
+package oganesyan.rsoi_lab2.library.model.library
 
 data class LibraryInfo(
     val libraryUid: String?,

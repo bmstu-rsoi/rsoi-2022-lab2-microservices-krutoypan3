@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2
+package oganesyan.rsoi_lab2.reservation
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.headers.Header
@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import oganesyan.rsoi_lab2.model.CreateReservationRequest
-import oganesyan.rsoi_lab2.model.ReservationByUsernameItemResponse
-import oganesyan.rsoi_lab2.service.ReservationService
+import oganesyan.rsoi_lab2.reservation.model.CreateReservationRequest
+import oganesyan.rsoi_lab2.reservation.model.ReservationByUsernameItemResponse
+import oganesyan.rsoi_lab2.reservation.service.ReservationService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

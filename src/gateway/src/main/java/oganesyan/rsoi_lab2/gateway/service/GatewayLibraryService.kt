@@ -1,7 +1,7 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.gateway.service
 
-import oganesyan.rsoi_lab2.model.GatewayLibraryRequest
-import oganesyan.rsoi_lab2.model.GatewayLibraryResponse
+import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryRequest
+import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryResponse
 import org.springframework.transaction.annotation.Transactional
 
 interface GatewayLibraryService {

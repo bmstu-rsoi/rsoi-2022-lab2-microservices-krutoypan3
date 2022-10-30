@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2.model
+package oganesyan.rsoi_lab2.reservation.model
 
 data class CreateReservationRequest(
     var username: String,

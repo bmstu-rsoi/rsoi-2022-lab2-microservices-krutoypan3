@@ -1,8 +1,8 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.reservation.service
 
-import oganesyan.rsoi_lab2.database.ReservationEntities
-import oganesyan.rsoi_lab2.model.*
-import oganesyan.rsoi_lab2.repository.ReservationRepository
+import oganesyan.rsoi_lab2.reservation.database.ReservationEntities
+import oganesyan.rsoi_lab2.reservation.model.*
+import oganesyan.rsoi_lab2.reservation.repository.ReservationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Service
@@ -59,7 +59,8 @@ open class ReservationServiceImpl@Autowired constructor(
     private fun entitiesToResponse(entities: List<ReservationEntities>): ReservationByUsernameItemResponse {
         val list = ReservationByUsernameItemResponse(arrayListOf())
         entities.forEach {
-            list.reservations.add(ReservationByUsernameItem(
+            list.reservations.add(
+                ReservationByUsernameItem(
                 it.reservation_uid,
                 it.username,
                 it.book_uid,

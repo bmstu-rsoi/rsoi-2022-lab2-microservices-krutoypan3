@@ -1,9 +1,9 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.library.service
 
-import oganesyan.rsoi_lab2.model.library.CreateLibraryRequest
-import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
-import oganesyan.rsoi_lab2.model.library.LibraryRequest
-import oganesyan.rsoi_lab2.model.library.LibraryResponse
+import oganesyan.rsoi_lab2.library.model.library.CreateLibraryRequest
+import oganesyan.rsoi_lab2.library.model.library_book.LibraryIdUidResponse
+import oganesyan.rsoi_lab2.library.model.library.LibraryRequest
+import oganesyan.rsoi_lab2.library.model.library.LibraryResponse
 import org.springframework.transaction.annotation.Transactional
 
 interface LibraryService {

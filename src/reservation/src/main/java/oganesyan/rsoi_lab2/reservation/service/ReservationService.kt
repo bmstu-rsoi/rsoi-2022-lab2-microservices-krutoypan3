@@ -1,7 +1,7 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.reservation.service
 
-import oganesyan.rsoi_lab2.model.CreateReservationRequest
-import oganesyan.rsoi_lab2.model.ReservationByUsernameItemResponse
+import oganesyan.rsoi_lab2.reservation.model.CreateReservationRequest
+import oganesyan.rsoi_lab2.reservation.model.ReservationByUsernameItemResponse
 import org.springframework.transaction.annotation.Transactional
 
 interface ReservationService {

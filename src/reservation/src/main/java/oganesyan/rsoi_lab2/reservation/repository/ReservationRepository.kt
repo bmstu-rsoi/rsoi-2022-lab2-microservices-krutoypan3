@@ -1,6 +1,6 @@
-package oganesyan.rsoi_lab2.repository
+package oganesyan.rsoi_lab2.reservation.repository
 
-import oganesyan.rsoi_lab2.database.ReservationEntities
+import oganesyan.rsoi_lab2.reservation.database.ReservationEntities
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
 

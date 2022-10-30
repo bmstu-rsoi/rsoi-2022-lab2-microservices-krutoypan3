@@ -1,7 +1,7 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.rating.service
 
-import oganesyan.rsoi_lab2.model.RatingResponse
-import oganesyan.rsoi_lab2.model.SetRatingRequest
+import oganesyan.rsoi_lab2.rating.model.RatingResponse
+import oganesyan.rsoi_lab2.rating.model.SetRatingRequest
 import org.springframework.transaction.annotation.Transactional
 
 interface RatingService {

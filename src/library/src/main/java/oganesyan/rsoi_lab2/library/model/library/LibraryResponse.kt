@@ -1,6 +1,4 @@
-package oganesyan.rsoi_lab2.model.library
-
-import oganesyan.rsoi_lab2.model.library.LibraryInfo
+package oganesyan.rsoi_lab2.library.model.library
 
 data class LibraryResponse(
     val page: Int?,

@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2
+package oganesyan.rsoi_lab2.library
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.headers.Header
@@ -6,12 +6,12 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import oganesyan.rsoi_lab2.model.*
-import oganesyan.rsoi_lab2.model.library.CreateLibraryRequest
-import oganesyan.rsoi_lab2.model.library.LibraryRequest
-import oganesyan.rsoi_lab2.model.library.LibraryResponse
-import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
-import oganesyan.rsoi_lab2.service.LibraryService
+import oganesyan.rsoi_lab2.library.model.*
+import oganesyan.rsoi_lab2.library.model.library.CreateLibraryRequest
+import oganesyan.rsoi_lab2.library.model.library.LibraryRequest
+import oganesyan.rsoi_lab2.library.model.library.LibraryResponse
+import oganesyan.rsoi_lab2.library.model.library_book.LibraryIdUidResponse
+import oganesyan.rsoi_lab2.library.service.LibraryService
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

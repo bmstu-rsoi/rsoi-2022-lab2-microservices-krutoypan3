@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2.model
+package oganesyan.rsoi_lab2.rating.model
 
 data class SetRatingRequest(
     var username: String,

@@ -1,9 +1,9 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.rating.service
 
-import oganesyan.rsoi_lab2.database.RatingEntities
-import oganesyan.rsoi_lab2.model.RatingResponse
-import oganesyan.rsoi_lab2.model.SetRatingRequest
-import oganesyan.rsoi_lab2.repository.RatingRepository
+import oganesyan.rsoi_lab2.rating.database.RatingEntities
+import oganesyan.rsoi_lab2.rating.model.RatingResponse
+import oganesyan.rsoi_lab2.rating.model.SetRatingRequest
+import oganesyan.rsoi_lab2.rating.repository.RatingRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

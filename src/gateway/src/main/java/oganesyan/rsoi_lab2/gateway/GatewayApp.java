@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2;
+package oganesyan.rsoi_lab2.gateway;
 
 
 import org.springframework.boot.SpringApplication;

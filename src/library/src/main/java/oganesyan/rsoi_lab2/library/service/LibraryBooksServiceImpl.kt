@@ -1,7 +1,7 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.library.service
 
-import oganesyan.rsoi_lab2.model.library_book.*
-import oganesyan.rsoi_lab2.repository.LibraryBookRepository
+import oganesyan.rsoi_lab2.library.model.library_book.*
+import oganesyan.rsoi_lab2.library.repository.LibraryBookRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Service

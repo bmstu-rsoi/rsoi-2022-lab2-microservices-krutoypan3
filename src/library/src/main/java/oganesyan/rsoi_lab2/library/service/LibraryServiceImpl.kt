@@ -1,12 +1,12 @@
-package oganesyan.rsoi_lab2.service
+package oganesyan.rsoi_lab2.library.service
 
-import oganesyan.rsoi_lab2.database.LibraryEntities
-import oganesyan.rsoi_lab2.model.library.CreateLibraryRequest
-import oganesyan.rsoi_lab2.model.library.LibraryInfo
-import oganesyan.rsoi_lab2.model.library.LibraryRequest
-import oganesyan.rsoi_lab2.model.library.LibraryResponse
-import oganesyan.rsoi_lab2.model.library_book.LibraryIdUidResponse
-import oganesyan.rsoi_lab2.repository.LibraryRepository
+import oganesyan.rsoi_lab2.library.database.LibraryEntities
+import oganesyan.rsoi_lab2.library.model.library.CreateLibraryRequest
+import oganesyan.rsoi_lab2.library.model.library.LibraryInfo
+import oganesyan.rsoi_lab2.library.model.library.LibraryRequest
+import oganesyan.rsoi_lab2.library.model.library.LibraryResponse
+import oganesyan.rsoi_lab2.library.model.library_book.LibraryIdUidResponse
+import oganesyan.rsoi_lab2.library.repository.LibraryRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

@@ -1,18 +1,20 @@
-package oganesyan.rsoi_lab2
+package oganesyan.rsoi_lab2.gateway
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import oganesyan.rsoi_lab2.model.GatewayLibraryRequest
-import oganesyan.rsoi_lab2.model.GatewayLibraryResponse
-import oganesyan.rsoi_lab2.service.GatewayLibraryService
-import org.springframework.http.MediaType
+import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryRequest
+import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryResponse
+import oganesyan.rsoi_lab2.gateway.service.GatewayLibraryService
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.client.*
+import java.util.*
 
 @Tag(name = "library_system_controller")
 @RestController
@@ -35,5 +37,5 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
     @GetMapping("/libraries", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getLibraryByCity(
         @RequestParam("city") city: String?, @RequestParam("page") page: Int?, @RequestParam("size") size: Int?,
-    ) = gatewayLibraryService.getLibraryByCity(GatewayLibraryRequest(page, size, city))
+    ) =  gatewayLibraryService.getLibraryByCity(GatewayLibraryRequest(city = city, page = page, size = size))
 }

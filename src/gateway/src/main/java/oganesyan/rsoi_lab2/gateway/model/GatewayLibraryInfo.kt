@@ -1,4 +1,4 @@
-package oganesyan.rsoi_lab2.model
+package oganesyan.rsoi_lab2.gateway.model
 
 data class GatewayLibraryInfo(
     val libraryUid: String?,
