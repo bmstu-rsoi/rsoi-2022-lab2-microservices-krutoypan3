@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.*
 import org.springframework.web.util.UriComponentsBuilder
+import java.text.SimpleDateFormat
 import java.util.ArrayList
 
 @Transactional
@@ -129,6 +130,78 @@ class GatewayLibraryServiceImpl: GatewayLibraryService {
             bookInfo,
             libraryInfo
         )
+    }
+
+    override fun getReservation(username: String): ArrayList<GatewayReservationResponse> {
+        val url = UriComponentsBuilder.fromHttpUrl("http://reservation:8070/reservation-system/getReservationsByUsername")
+            .queryParam("username", username)
+            .toUriString()
+
+        val obj = getObjByUrl(url)
+
+        println("\n$obj\n")
+
+        val obj2 = obj.getJSONArray("reservations")
+
+        println("\n$obj2\n")
+
+        val items: ArrayList<GatewayReservationResponse> = arrayListOf()
+
+        val size = obj2.length()
+        for (i in 0 until size){
+            val obj22 = obj2.getJSONObject(i)
+
+            val bookUid = obj22.getString("book_uid")
+            val libraryUid = obj22.getString("library_uid")
+
+            val urlBook = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/books/getBookByUid")
+                .queryParam("book_uid", bookUid)
+                .toUriString()
+            val objBook = getObjByUrl(urlBook)
+
+            val url2 = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/library-books/getAvailableCountByBookUidAndLibraryUid")
+                .queryParam("library_uid", libraryUid)
+                .queryParam("book_uid", bookUid)
+                .toUriString()
+            val obj3 = getObjByUrl(url2)
+
+            println("\n$obj3\n")
+
+            val bookInfo = GatewayBookInfo(
+                objBook.getString("bookUid"),
+                objBook.getString("name"),
+                objBook.getString("author"),
+                objBook.getString("genre"),
+                objBook.getString("condition"),
+                obj3.getLong("available_count"), // TODO тут ТАК-ТО NULL ПРИХОДИТ, НУЖНО САМОМУ ПОЛУЧАТЬ ЭТО ЧИСЛО \\ Upd. Сделал вроде бы
+            )
+
+            val urlLibrary = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/getLibraryByUid")
+                .queryParam("library_uid", libraryUid)
+                .toUriString()
+            val objLibrary = getObjByUrl(urlLibrary)
+            val libraryInfo = GatewayLibraryInfo(
+                libraryUid = objLibrary.getString("libraryUid"),
+                name = objLibrary.getString("name"),
+                city = objLibrary.getString("city"),
+                address = objLibrary.getString("address"),
+            )
+
+            val sdf = SimpleDateFormat("yyyy-MM-dd")
+
+            items.add(
+                GatewayReservationResponse(
+                    status = obj22.getString("status"),
+                    startDate = sdf.format(sdf.parse(obj22.getString("start_date"))), // TODO Сейчас тут формат |YYYY-MM-DD hh:mm:ss:xxx| \\ Upd. вроде исправил
+                    tillDate = sdf.format(sdf.parse(obj22.getString("till_date"))),
+                    reservationUid = obj22.getString("reservation_uid"),
+                    book = bookInfo,
+                    library = libraryInfo,
+                )
+            )
+        }
+
+        return items
     }
 
     private fun parseGatewayBookInfo(obj: JSONObject, libraryUid: String): GatewayBookInfo {

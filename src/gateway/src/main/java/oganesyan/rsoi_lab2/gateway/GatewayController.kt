@@ -70,4 +70,9 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
         @RequestHeader(value = "X-User-Name") username: String,
         @RequestBody gatewayReservationRequest: GatewayReservationRequest,
     ) = gatewayLibraryService.setReservation(username, gatewayReservationRequest)
+
+    @GetMapping("/reservations")
+    fun getReservation(
+        @RequestHeader(value = "X-User-Name") username: String,
+    ) = gatewayLibraryService.getReservation(username)
 }

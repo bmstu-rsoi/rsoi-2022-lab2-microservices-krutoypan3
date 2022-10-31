@@ -4,7 +4,7 @@ data class GatewayReservationResponse(
     var status: String,
     var startDate: String,
     var tillDate: String,
-    var reservation_uid: String,
+    var reservationUid: String,
 
     var book: GatewayBookInfo,
     var library: GatewayLibraryInfo,
