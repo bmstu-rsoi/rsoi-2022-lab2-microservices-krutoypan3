@@ -13,4 +13,6 @@ interface LibraryBookService {
     fun getAvailableCountByBookUidAndLibraryUid(book_uid: String?, library_uid: String?): LibraryBookInfo
 
     fun putLibraryBook(createLibraryBookRequest: CreateLibraryBookRequest)
+
+    fun changeAvailableCountByBookUidAndLibraryUid(book_uid: String?, library_uid: String?, available_count: Int?)
 }

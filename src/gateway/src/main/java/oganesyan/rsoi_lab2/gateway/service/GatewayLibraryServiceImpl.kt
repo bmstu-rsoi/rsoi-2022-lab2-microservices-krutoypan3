@@ -8,9 +8,10 @@ import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.util.UriComponentsBuilder
 import java.text.SimpleDateFormat
-import java.util.ArrayList
+import java.util.*
 
 @Transactional
 @Service
@@ -204,6 +205,48 @@ class GatewayLibraryServiceImpl: GatewayLibraryService {
         return items
     }
 
+    override fun returnReservation(username: String, gatewayReservationReturnRequest: GatewayReservationReturnRequest, reservationUid: String) {
+        // Тут мы меняем status кniggi на RETURNED или EXPIRED
+        val url = UriComponentsBuilder.fromHttpUrl("http://reservation:8070/reservation-system/removeReservation")
+            .queryParam("username", username)
+            .queryParam("reservationUid", reservationUid)
+            .queryParam("date", gatewayReservationReturnRequest.date)
+            .toUriString()
+        val objReservationByUsernameItem = getObjByUrl(url)
+
+        // Тут мы меняем кол-во книг в библиотеке
+        val url2 = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/library-books/changeAvailableCountByBookUidAndLibraryUid")
+            .queryParam("book_uid", objReservationByUsernameItem.getString("book_uid"))
+            .queryParam("library_uid", objReservationByUsernameItem.getString("library_uid"))
+            .queryParam("available_count", 1)
+            .toUriString()
+        getObjByUrlNotResponse(url2)
+        // TODO Нужно обновить кол-во книг в библиотеке + изменить статус книги \\ Upd. Сверху сделано.
+
+
+        var stars = 0
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+
+        val currentDate = Date().time
+
+        val tillDate = sdf.parse(objReservationByUsernameItem.getString("till_date")).time
+
+        if (currentDate > tillDate)
+            stars -= 10 // Если просрочка, то отнимаем 10 звезд
+        else
+            stars += 1 // Если книга возвращена вовремя, то добавляем 1 звезду
+
+        println("\n$username $stars\n")
+
+        val url3 = UriComponentsBuilder.fromHttpUrl("http://rating:8050/rating-system/setRatingByUsername")
+            .queryParam("username", username)
+            .queryParam("stars", stars)
+            .toUriString()
+
+        getObjByUrlNotResponse(url3)
+        // TODO Также нужно поднять \ опустить рейтинг пользователю \\ Upd. Сделано выше.
+    }
+
     private fun parseGatewayBookInfo(obj: JSONObject, libraryUid: String): GatewayBookInfo {
         val bookUid = obj.getString("bookUid")
         val name = obj.getString("name")
@@ -297,5 +340,30 @@ class GatewayLibraryServiceImpl: GatewayLibraryService {
             throw ErrorBadRequest(response.body ?: "", ArrayList())
         }
         return JSONObject(response.body)
+    }
+
+    private fun getObjByUrlNotResponse(url: String){
+        val headers = HttpHeaders()
+        headers[HttpHeaders.ACCEPT] = MediaType.APPLICATION_JSON_VALUE
+        val entity: HttpEntity<*> = HttpEntity<Any>(headers)
+
+        val restOperations: RestOperations = RestTemplate()
+        try {
+            restOperations.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                String::class.java
+            )
+        } catch (e: HttpClientErrorException) {
+            println(e)
+            throw ErrorBadRequest(e.toString(), ArrayList())
+        } catch (e: HttpServerErrorException) {
+            println(e)
+            throw ErrorBadRequest(e.toString(), ArrayList())
+        } catch (e: RestClientException) {
+            println(e)
+            throw ErrorBadRequest(e.toString(), ArrayList())
+        }
     }
 }

@@ -46,6 +46,9 @@ open class LibraryServiceImpl @Autowired constructor(
 
     override fun getLibraryIdByUid(library_uid: String?): LibraryIdUidResponse {
         entityManager.joinTransaction()
+
+        println("\n$library_uid\n")
+
         val entities2 = entityManager.createNativeQuery("SELECT id FROM library WHERE library_uid = '$library_uid'").resultList
         return if (entities2.isNotEmpty())
             LibraryIdUidResponse(library_id = entities2[0].toString().toInt(), library_uid = library_uid)

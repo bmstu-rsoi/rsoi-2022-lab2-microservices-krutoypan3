@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.util.UriComponentsBuilder
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.EntityManager
+import kotlin.collections.ArrayList
 
 @Transactional
 @Service
@@ -87,6 +89,69 @@ open class ReservationServiceImpl@Autowired constructor(
             startDate = null,
             tillDate = null,
             reservation_uid = null
+        )
+    }
+
+    override fun removeReservation(request: RemoveReservationRequest): ReservationByUsernameItem {
+        entityManager.joinTransaction()
+
+        val reservation = getReservationByUid(request.reservationUid)
+
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd")
+
+        val current_date = Date().time
+
+        println("\n${reservation.till_date}\n")
+
+        val till_date = sdf.parse(reservation.till_date).time
+
+        val status = if (current_date > till_date)
+            "EXPIRED"
+        else
+            "RETURNED"
+
+        println("\nPOINT 12 $status\n")
+
+        reservation.status?.let {
+            entityManager.createNativeQuery("UPDATE reservation SET status = '$status' WHERE reservation_uid = '${request.reservationUid}'").executeUpdate()
+        }
+        return reservation
+    }
+
+    private fun getReservationByUid(reservation_uid: String): ReservationByUsernameItem {
+        entityManager.joinTransaction()
+
+        println("\n$reservation_uid\n")
+
+        val entities = entityManager.createNativeQuery("SELECT CAST(reservation_uid AS VARCHAR), username, CAST(book_uid AS VARCHAR), CAST(library_uid AS VARCHAR), status, CAST(start_date AS VARCHAR), CAST(till_date AS VARCHAR) FROM reservation WHERE reservation_uid = '$reservation_uid'").resultList
+
+        println("\n$entities\n")
+
+        if (entities?.isNotEmpty() == true) {
+            val objectArray: Array<Any?>? = entities[0] as Array<Any?>?
+
+            println("\nPOINT 10\n")
+            println("\n${objectArray?.size}\n")
+            return ReservationByUsernameItem(
+                reservation_uid = objectArray?.get(0).toString(),
+                username = objectArray?.get(1).toString(),
+                book_uid = objectArray?.get(2).toString(),
+                library_uid = objectArray?.get(3).toString(),
+                status = objectArray?.get(4).toString(),
+                start_date = objectArray?.get(5).toString(),
+                till_date = objectArray?.get(6).toString(),
+            )
+        }
+        println("\nPOINT 11\n")
+        return ReservationByUsernameItem(
+            reservation_uid = reservation_uid,
+            username = null,
+            book_uid = null,
+            library_uid = null,
+            status = null,
+            start_date = null,
+            till_date = null,
         )
     }
 

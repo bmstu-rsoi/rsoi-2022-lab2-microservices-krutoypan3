@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import oganesyan.rsoi_lab2.reservation.model.CreateReservationRequest
 import oganesyan.rsoi_lab2.reservation.model.CreateReservationResponse
+import oganesyan.rsoi_lab2.reservation.model.RemoveReservationRequest
 import oganesyan.rsoi_lab2.reservation.model.ReservationByUsernameItemResponse
 import oganesyan.rsoi_lab2.reservation.service.ReservationService
 import org.springframework.http.MediaType
@@ -47,5 +48,18 @@ class ReservationSystemController(private val reservationService: ReservationSer
         @RequestParam("tillDate") tillDate: String,
     ): CreateReservationResponse = reservationService.putReservation(
         CreateReservationRequest(username, bookUid, libraryUid, tillDate)
+    )
+
+    @GetMapping("/removeReservation", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun removeReservation(
+        @RequestParam("username") username: String,
+        @RequestParam("reservationUid") reservationUid: String,
+        @RequestParam("date") date: String,
+    ) = reservationService.removeReservation(
+        RemoveReservationRequest(
+            username = username,
+            reservationUid = reservationUid,
+            date = date
+        )
     )
 }

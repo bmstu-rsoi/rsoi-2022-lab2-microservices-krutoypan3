@@ -26,7 +26,12 @@ open class RatingServiceImpl @Autowired constructor(private val ratingRepository
         }
         val saveEntity = RatingEntities()
         saveEntity.username = setRatingRequest.username
-        saveEntity.stars = setRatingRequest.stars
+        saveEntity.stars = (entities.stars?: 50) + setRatingRequest.stars
+
+        if (saveEntity.stars!! > 100)
+            saveEntity.stars = 100
+        else if (saveEntity.stars!! < 1)
+            saveEntity.stars = 1
 
         ratingRepository.save(saveEntity)
     }

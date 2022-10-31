@@ -52,9 +52,9 @@ class RatingSystemController(private val ratingService: RatingService) {
             )
         ]
     )
-    @PostMapping("/setRatingByUsername", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun createLibrary(@Valid @RequestBody request: SetRatingRequest): ResponseEntity<Void> {
-        ratingService.setRatingByUsername(request)
-        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).build()
-    }
+    @GetMapping("/setRatingByUsername", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun createLibrary(
+        @RequestParam("username") username: String,
+        @RequestParam("stars") stars: Int
+    ) = ratingService.setRatingByUsername(SetRatingRequest(username = username, stars = stars))
 }

@@ -10,6 +10,7 @@ import oganesyan.rsoi_lab2.gateway.service.GatewayLibraryService
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.util.*
 
 @Tag(name = "library_system_controller")
@@ -48,9 +49,12 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
             ),
         ]
     )
-    @GetMapping("/libraries/{libraryUid}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/libraries/{libraryUid}/books", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getBooksByLibrary(
-        @PathVariable("libraryUid") libraryUid: String, @RequestParam("page") page: Int?, @RequestParam("size") size: Int?, @RequestParam("showAll") showAll: Boolean?,
+        @PathVariable("libraryUid") libraryUid: String,
+        @RequestParam("page") page: Int?,
+        @RequestParam("size") size: Int?,
+        @RequestParam("showAll") showAll: Boolean?,
     ) = gatewayLibraryService.getBooksByLibrary(
         GatewayBooksByLibraryRequest(
             library_uid = libraryUid,
@@ -62,7 +66,7 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
 
     @GetMapping("/rating")
     fun getRating(
-        @RequestHeader(value = "X-User-Name") username: String
+        @RequestHeader(value = "X-User-Name") username: String,
     ) = gatewayLibraryService.getRating(username)
 
     @PostMapping("/reservations")
@@ -70,6 +74,17 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
         @RequestHeader(value = "X-User-Name") username: String,
         @RequestBody gatewayReservationRequest: GatewayReservationRequest,
     ) = gatewayLibraryService.setReservation(username, gatewayReservationRequest)
+
+
+    @PostMapping("/reservations/{reservationUid}/return")
+    fun returnReservation(
+        @RequestHeader(value = "X-User-Name") username: String,
+        @RequestBody gatewayReservationReturnRequest: GatewayReservationReturnRequest,
+        @PathVariable reservationUid: String,
+    ): ResponseEntity<Void> {
+        gatewayLibraryService.returnReservation(username, gatewayReservationReturnRequest, reservationUid)
+        return ResponseEntity<Void>(HttpStatus.NO_CONTENT)
+    }
 
     @GetMapping("/reservations")
     fun getReservation(

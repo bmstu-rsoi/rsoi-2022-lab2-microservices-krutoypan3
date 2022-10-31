@@ -62,4 +62,23 @@ open class LibraryBooksServiceImpl @Autowired constructor(
             .setParameter(3, createLibraryBookRequest.available_count)
             .executeUpdate()
     }
+
+    override fun changeAvailableCountByBookUidAndLibraryUid(
+        book_uid: String?,
+        library_uid: String?,
+        available_count: Int?,
+    ) {
+        val libraryBookInfo = getAvailableCountByBookUidAndLibraryUid(book_uid, library_uid)
+
+        val url = "http://localhost:8060/library-system/getLibraryIDByUID?library_uid=${library_uid}"
+        val libraryId = restTemplate.getForObject(url, LibraryIdUidResponse::class.java)?.library_id
+
+        val url2 = "http://localhost:8060/library-system/books/getBookIDByUID?book_uid=${book_uid}"
+        val bookId = restTemplate.getForObject(url2, BookIdUidResponse::class.java)?.book_id
+
+
+        entityManager.joinTransaction()
+
+        entityManager.createNativeQuery("UPDATE library_books SET available_count = '${libraryBookInfo.available_count!! + available_count!!}' WHERE book_id = '$bookId' AND library_id = '$libraryId'").executeUpdate()
+    }
 }

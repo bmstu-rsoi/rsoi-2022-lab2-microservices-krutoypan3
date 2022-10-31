@@ -79,5 +79,11 @@ class LibrarySystemLibraryBookController(private val libraryBookService: Library
         @RequestParam("library_uid") library_uid: String?,
     ) = libraryBookService.getAvailableCountByBookUidAndLibraryUid(book_uid = book_uid, library_uid = library_uid)
 
+    @GetMapping("/changeAvailableCountByBookUidAndLibraryUid", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun changeAvailableCountByBookUidAndLibraryUid(
+        @RequestParam("book_uid") book_uid: String?,
+        @RequestParam("library_uid") library_uid: String?,
+        @RequestParam("available_count") available_count: Int?
+    ) = libraryBookService.changeAvailableCountByBookUidAndLibraryUid(book_uid = book_uid, library_uid = library_uid, available_count = available_count)
 
 }
