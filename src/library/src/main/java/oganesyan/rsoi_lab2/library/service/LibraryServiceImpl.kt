@@ -53,6 +53,29 @@ open class LibraryServiceImpl @Autowired constructor(
             LibraryIdUidResponse(library_id = null, library_uid = library_uid)
     }
 
+    override fun getLibraryByUid(library_uid: String?): LibraryInfo {
+        entityManager.joinTransaction()
+        val entities2 = entityManager.createNativeQuery("SELECT CAST(library_uid AS VARCHAR), name, city, address FROM library WHERE library_uid = '$library_uid'").resultList
+        return if (entities2.isNotEmpty()) {
+            val objectArray: Array<Any?>? = entities2[0] as Array<Any?>?
+
+
+            LibraryInfo(
+                libraryUid = objectArray?.get(0)?.toString(),
+                name = objectArray?.get(1)?.toString(),
+                city = objectArray?.get(2)?.toString(),
+                address = objectArray?.get(3)?.toString()
+            )
+        }
+        else
+            LibraryInfo(
+                libraryUid = library_uid,
+                name = null,
+                city = null,
+                address = null
+            )
+    }
+
     @Transactional
     open fun insertWithQuery(library: CreateLibraryRequest) {
         entityManager.joinTransaction()

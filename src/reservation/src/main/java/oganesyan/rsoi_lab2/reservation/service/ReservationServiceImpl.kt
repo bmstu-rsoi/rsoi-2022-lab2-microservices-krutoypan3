@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.persistence.EntityManager
 
@@ -21,39 +23,71 @@ open class ReservationServiceImpl@Autowired constructor(
         return entitiesToResponse(reservationRepository.findAllByUsername(username))
     }
 
-    override fun putReservation(request: CreateReservationRequest) {
-
+    override fun putReservation(request: CreateReservationRequest): CreateReservationResponse {
+        println("\nTESTO : POINT-5\n")
         // TODO Тут нужно проверять кол-во уже взятых книг
         val reservations = getReservationsByUsername(request.username).reservations
-
+        println("\nTESTO : POINT-6\n")
         // TODO Тут нужно рассчитывать максимальное кол-во книг, которое может взять пользователь
         // Здесь отправляем запрос на получение рейтинга пользователя по username
-        val url = "http://localhost:8050/rating-system/getRatingByUsername?username=${request.username}"
+        val url = "http://rating:8050/rating-system/getRatingByUsername?username=${request.username}"
         val stars = restTemplate.getForObject(url, ReservationRatingResponse::class.java)?.stars ?: 30
-        val maxBooksCount = stars / 10
-        if (reservations.size < maxBooksCount) {
-            val saveEntity = ReservationEntities()
 
+        println("\nTESTO : POINT-6.5: stars:$stars\n")
+
+
+        val maxBooksCount = stars / 10
+        println("\nTESTO : POINT-7\n")
+        println("\nreservation.size:${reservations.size}\n")
+        if (reservations.size < maxBooksCount) {
             // TODO Нужно узнать, есть ли книга в библиотеке
-            val url2 = "http://localhost:8070/library-system/library-books/getAvailableCountByBookUidAndLibraryUid?book_uid=${request.bookUid}&library_uid=${request.libraryUid}"
-            val availableCount = restTemplate.getForObject(url, ReservationLibraryBookInfo::class.java)?.available_count
+            val url2 = "http://library:8060/library-system/library-books/getAvailableCountByBookUidAndLibraryUid?book_uid=${request.bookUid}&library_uid=${request.libraryUid}"
+            val availableCount = restTemplate.getForObject(url2, ReservationLibraryBookInfo::class.java)?.available_count
+            println("\nTESTO : POINT-7.5: availableCount:$availableCount\n")
             if (availableCount != null) {
                 if (availableCount > 0) {
                     val entity = ReservationEntities()
-                    entity.book_uid = request.bookUid
-                    entity.library_uid = request.libraryUid
+                    entity.book_uid = UUID.fromString(request.bookUid)
+                    entity.library_uid = UUID.fromString(request.libraryUid)
                     entity.username = request.username
-                    entity.reservation_uid = UUID.randomUUID().toString()
-                    entity.start_date = Date().time.toString()
-                    entity.till_date = Date.parse(request.tillDate).toString()
+                    entity.reservation_uid = UUID.randomUUID()
 
-                    // TODO Тут еще нужно получить статус книги по ее UID
+                    entity.start_date = Timestamp(Date().time)
+
+
+                    val sdf = SimpleDateFormat("yyyy-MM-dd")
+                    val timeMs = sdf.parse(request.tillDate).time
+
+                    entity.till_date = Timestamp(timeMs)
+
+                    // TODO Тут еще нужно получить статус книги по ее UID \\ Upd. Зачем?
+
+                    entity.status = "RENTED"
 
                     reservationRepository.save(entity)
+
+                    val startDate = sdf.format(entity.start_date)
+
+                    println("\nTESTO : POINT-8 NOT NULL\n")
+
+
+                    return CreateReservationResponse(
+                        status = entity.status,
+                        startDate = startDate,
+                        tillDate = request.tillDate,
+                        reservation_uid = entity.reservation_uid!!.toString()
+                    )
                 }
             }
-
         }
+        println("\nTESTO : POINT-8 NULL\n")
+
+        return CreateReservationResponse(
+            status = null,
+            startDate = null,
+            tillDate = null,
+            reservation_uid = null
+        )
     }
 
     private fun entitiesToResponse(entities: List<ReservationEntities>): ReservationByUsernameItemResponse {
@@ -61,13 +95,13 @@ open class ReservationServiceImpl@Autowired constructor(
         entities.forEach {
             list.reservations.add(
                 ReservationByUsernameItem(
-                it.reservation_uid,
+                it.reservation_uid.toString(),
                 it.username,
-                it.book_uid,
-                it.library_uid,
+                it.book_uid.toString(),
+                it.library_uid.toString(),
                 it.status,
-                it.start_date,
-                it.till_date
+                it.start_date.toString(),
+                it.till_date.toString()
             )
             )
         }

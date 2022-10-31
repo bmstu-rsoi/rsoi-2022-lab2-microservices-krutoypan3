@@ -72,6 +72,65 @@ class GatewayLibraryServiceImpl: GatewayLibraryService {
         return GatewayRatingResponse(username, obj.getInt("stars"))
     }
 
+    override fun setReservation(
+        username: String,
+        gatewayReservationRequest: GatewayReservationRequest,
+    ): GatewayReservationResponse {
+
+        val url = UriComponentsBuilder.fromHttpUrl("http://reservation:8070/reservation-system/putReservation")
+            .queryParam("username", username)
+            .queryParam("bookUid", gatewayReservationRequest.bookUid)
+            .queryParam("libraryUid", gatewayReservationRequest.libraryUid)
+            .queryParam("tillDate", gatewayReservationRequest.tillDate)
+            .toUriString()
+
+        val obj = getObjByUrl(url)
+
+        println("\n$obj\n")
+
+        val urlBook = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/books/getBookByUid")
+            .queryParam("book_uid", gatewayReservationRequest.bookUid)
+            .toUriString()
+        val objBook = getObjByUrl(urlBook)
+
+        val url2 = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/library-books/getAvailableCountByBookUidAndLibraryUid")
+            .queryParam("library_uid", gatewayReservationRequest.libraryUid)
+            .queryParam("book_uid", gatewayReservationRequest.bookUid)
+            .toUriString()
+        val obj2 = getObjByUrl(url2)
+
+        println("\n$obj2\n")
+
+        val bookInfo = GatewayBookInfo(
+            objBook.getString("bookUid"),
+            objBook.getString("name"),
+            objBook.getString("author"),
+            objBook.getString("genre"),
+            objBook.getString("condition"),
+            obj2.getLong("available_count"), // TODO тут ТАК-ТО NULL ПРИХОДИТ, НУЖНО САМОМУ ПОЛУЧАТЬ ЭТО ЧИСЛО \\ Upd. Сделал вроде бы
+        )
+
+        val urlLibrary = UriComponentsBuilder.fromHttpUrl("http://library:8060/library-system/getLibraryByUid")
+            .queryParam("library_uid", gatewayReservationRequest.libraryUid)
+            .toUriString()
+        val objLibrary = getObjByUrl(urlLibrary)
+        val libraryInfo = GatewayLibraryInfo(
+            libraryUid = objLibrary.getString("libraryUid"),
+            name = objLibrary.getString("name"),
+            city = objLibrary.getString("city"),
+            address = objLibrary.getString("address"),
+        )
+
+        return GatewayReservationResponse(
+            obj.getString("status"),
+            obj.getString("startDate"),
+            obj.getString("tillDate"),
+            obj.getString("reservation_uid"),
+            bookInfo,
+            libraryInfo
+        )
+    }
+
     private fun parseGatewayBookInfo(obj: JSONObject, libraryUid: String): GatewayBookInfo {
         val bookUid = obj.getString("bookUid")
         val name = obj.getString("name")
@@ -95,6 +154,44 @@ class GatewayLibraryServiceImpl: GatewayLibraryService {
         val address = obj.getString("address")
         val city = obj.getString("city")
         return GatewayLibraryInfo(libraryUid, name, address, city)
+    }
+
+    private fun postObjByUrl(url: String): JSONObject{
+        println("\nTESTO : POINT-1\n")
+        val headers = HttpHeaders()
+        headers[HttpHeaders.ACCEPT] = MediaType.APPLICATION_JSON_VALUE
+        val entity: HttpEntity<*> = HttpEntity<Any>(headers)
+        println("\nTESTO : POINT-2\n")
+        val restOperations: RestOperations = RestTemplate()
+
+        println("\nTESTO : $url\n")
+
+        println("\nTESTO : POINT-3\n")
+        val response: ResponseEntity<String> = try {
+            restOperations.exchange(
+                url,
+                HttpMethod.POST,
+                entity,
+                String::class.java
+            )
+        } catch (e: HttpClientErrorException) {
+            println(e)
+            throw ErrorBadRequest(e.toString(), ArrayList())
+        } catch (e: HttpServerErrorException) {
+            println(e)
+            throw ErrorBadRequest(e.toString(), ArrayList())
+        } catch (e: RestClientException) {
+            println(e)
+            throw ErrorBadRequest(e.toString(), ArrayList())
+        }
+        if (response.statusCode == HttpStatus.NOT_FOUND) {
+            throw ErrorNotFound(response.body?: "")
+        }
+        if (response.statusCode == HttpStatus.BAD_REQUEST) {
+            throw ErrorBadRequest(response.body ?: "", ArrayList())
+        }
+        println("\nTESTO : POINT-4\n")
+        return JSONObject(response.body)
     }
 
     private fun getObjByUrl(url: String): JSONObject{

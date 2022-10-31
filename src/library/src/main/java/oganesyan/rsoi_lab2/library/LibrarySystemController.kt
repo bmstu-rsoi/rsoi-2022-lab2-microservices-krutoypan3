@@ -59,6 +59,9 @@ class LibrarySystemController(private val libraryService: LibraryService) {
     @GetMapping("/getLibraryIDByUID", produces = [APPLICATION_JSON_VALUE])
     fun getLibraryIDByUID(@RequestParam("library_uid") library_uid: String?) = libraryService.getLibraryIdByUid(library_uid)
 
+    @GetMapping("/getLibraryByUid", produces = [APPLICATION_JSON_VALUE])
+    fun getLibraryByUid(@RequestParam("library_uid") library_uid: String?) = libraryService.getLibraryByUid(library_uid)
+
     @Operation(
         summary = "get_libraries",
         responses = [

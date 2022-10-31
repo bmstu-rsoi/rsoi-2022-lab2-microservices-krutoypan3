@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import oganesyan.rsoi_lab2.gateway.model.GatewayBookResponse
-import oganesyan.rsoi_lab2.gateway.model.GatewayBooksByLibraryRequest
-import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryRequest
-import oganesyan.rsoi_lab2.gateway.model.GatewayLibraryResponse
+import oganesyan.rsoi_lab2.gateway.model.*
 import oganesyan.rsoi_lab2.gateway.service.GatewayLibraryService
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
@@ -67,4 +64,10 @@ class GatewayController(private val gatewayLibraryService: GatewayLibraryService
     fun getRating(
         @RequestHeader(value = "X-User-Name") username: String
     ) = gatewayLibraryService.getRating(username)
+
+    @PostMapping("/reservations")
+    fun setReservation(
+        @RequestHeader(value = "X-User-Name") username: String,
+        @RequestBody gatewayReservationRequest: GatewayReservationRequest,
+    ) = gatewayLibraryService.setReservation(username, gatewayReservationRequest)
 }

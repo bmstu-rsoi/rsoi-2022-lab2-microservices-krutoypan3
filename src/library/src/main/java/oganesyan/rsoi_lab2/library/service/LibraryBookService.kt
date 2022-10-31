@@ -1,5 +1,6 @@
 package oganesyan.rsoi_lab2.library.service
 
+import oganesyan.rsoi_lab2.library.model.book.BookInfo
 import oganesyan.rsoi_lab2.library.model.library_book.CreateLibraryBookRequest
 import oganesyan.rsoi_lab2.library.model.library_book.LibraryBookInfo
 import oganesyan.rsoi_lab2.library.model.library_book.LibraryBookInfoResponse

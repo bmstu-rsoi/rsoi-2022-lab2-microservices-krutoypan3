@@ -62,6 +62,36 @@ open class BookServiceImpl @Autowired constructor(
             BookIdUidResponse(book_id = null, book_uid = book_uid)
     }
 
+    override fun getBookByUid(book_uid: String?): BookInfo {
+        entityManager.joinTransaction()
+
+        println("\nTESTO : POINT-8: book_uid:$book_uid\n")
+
+
+        val entities2 = entityManager.createNativeQuery("SELECT CAST(book_uid AS VARCHAR), name, author, genre, condition FROM books WHERE book_uid = '$book_uid'").resultList
+
+        return if (entities2.isNotEmpty()) {
+            val objectArray: Array<Any?>? = entities2[0] as Array<Any?>?
+            BookInfo(
+                bookUid = objectArray?.get(0)?.toString(),
+                name = objectArray?.get(1)?.toString(),
+                author = objectArray?.get(2)?.toString(),
+                genre = objectArray?.get(3)?.toString(),
+                condition = objectArray?.get(4)?.toString(),
+                avaiblableCount = null
+            )
+        }
+        else
+            BookInfo(
+                bookUid = null,
+                name = null,
+                author = null,
+                genre = null,
+                condition = null,
+                avaiblableCount = null
+            )
+    }
+
     override fun putBooks(createBookRequest: CreateBookRequest) {
         insertWithQuery(createBookRequest)
     }

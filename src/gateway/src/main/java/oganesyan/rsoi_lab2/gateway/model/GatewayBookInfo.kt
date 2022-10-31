@@ -6,5 +6,5 @@ data class GatewayBookInfo(
     val author: String?,
     val genre: String?,
     val condition: String?,
-    val avaiblableCount: Long?
+    val availableCount: Long?
 )

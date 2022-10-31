@@ -1,5 +1,6 @@
 package oganesyan.rsoi_lab2.library.service
 
+import oganesyan.rsoi_lab2.library.model.book.BookInfo
 import oganesyan.rsoi_lab2.library.model.book.BookRequest
 import oganesyan.rsoi_lab2.library.model.book.BookResponse
 import oganesyan.rsoi_lab2.library.model.book.CreateBookRequest
@@ -12,6 +13,8 @@ interface BookService {
 
     @Transactional(readOnly = true)
     fun getBookIdByUid(book_uid: String?): BookIdUidResponse
+
+    fun getBookByUid(book_uid: String?): BookInfo
 
     fun putBooks(createBookRequest: CreateBookRequest)
 }

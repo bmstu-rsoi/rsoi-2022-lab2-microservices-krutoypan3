@@ -46,6 +46,12 @@ class LibrarySystemBookController(private val bookService: BookService) {
     ) = bookService.getBooksByLibrary(BookRequest(library_uid, page, size, showAll))
 
 
+    @GetMapping("/getBookByUid", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun getBookByUid(
+        @RequestParam("book_uid") book_uid: String?
+    ) = bookService.getBookByUid(book_uid)
+
+
     @Operation(
         summary = "get_bookID_by_UID",
         responses = [

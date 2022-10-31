@@ -9,4 +9,6 @@ interface GatewayLibraryService {
     fun getBooksByLibrary(gatewayBooksByLibraryRequest: GatewayBooksByLibraryRequest): GatewayBookResponse
 
     fun getRating(username: String): GatewayRatingResponse
+
+    fun setReservation(username: String, gatewayReservationRequest: GatewayReservationRequest): GatewayReservationResponse
 }

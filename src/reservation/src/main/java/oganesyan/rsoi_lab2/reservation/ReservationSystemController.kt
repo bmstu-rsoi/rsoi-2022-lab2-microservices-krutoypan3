@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import oganesyan.rsoi_lab2.reservation.model.CreateReservationRequest
+import oganesyan.rsoi_lab2.reservation.model.CreateReservationResponse
 import oganesyan.rsoi_lab2.reservation.model.ReservationByUsernameItemResponse
 import oganesyan.rsoi_lab2.reservation.service.ReservationService
 import org.springframework.http.MediaType
@@ -35,29 +36,16 @@ class ReservationSystemController(private val reservationService: ReservationSer
         ]
     )
     @GetMapping("/getReservationsByUsername", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getReservationsByUsername(@RequestParam("username") username: String)
-    = reservationService.getReservationsByUsername(username)
+    fun getReservationsByUsername(@RequestParam("username") username: String) =
+        reservationService.getReservationsByUsername(username)
 
-
-
-    @Operation(
-        summary = "put_reservation", responses = [
-            ApiResponse(
-                responseCode = "201",
-                description = "Created new reservation",
-                headers = [Header(name = "Location", description = "Path to new Reservation")]
-            ),
-            ApiResponse(
-                responseCode = "400", description = "Invalid data"
-            ),
-            ApiResponse(
-                responseCode = "501", description = "Сервер так смешно делает пых-пых"
-            )
-        ]
+    @GetMapping("/putReservation", produces = [MediaType.APPLICATION_JSON_VALUE])
+    private fun putReservation(
+        @RequestParam("username") username: String,
+        @RequestParam("bookUid") bookUid: String,
+        @RequestParam("libraryUid") libraryUid: String,
+        @RequestParam("tillDate") tillDate: String,
+    ): CreateReservationResponse = reservationService.putReservation(
+        CreateReservationRequest(username, bookUid, libraryUid, tillDate)
     )
-    @PostMapping("/putReservation", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    private fun putReservation(@Valid @RequestBody request: CreateReservationRequest): ResponseEntity<Void> {
-        reservationService.putReservation(request)
-        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).build()
-    }
 }
