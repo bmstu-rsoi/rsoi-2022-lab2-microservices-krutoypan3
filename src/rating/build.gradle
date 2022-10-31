@@ -59,6 +59,10 @@ springBoot {
     buildInfo()
 }
 
+task wrapperz(type: Wrapper) {
+    gradleVersion = '7.5' //version required
+}
+
 bootJar {
     archiveFileName = "rating.jar"
     layered {
